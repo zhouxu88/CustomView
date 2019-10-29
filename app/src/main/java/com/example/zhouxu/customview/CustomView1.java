@@ -39,9 +39,6 @@ public class CustomView1 extends View {
     private List<PieData> mData = new ArrayList<>();
     private int centerX, centerY;
 
-    private PointF start, end, control1, control2;
-    private boolean mode = true;
-
 
     public CustomView1(Context context) {
         this(context, null);
@@ -59,23 +56,22 @@ public class CustomView1 extends View {
     private void initPaint() {
         mPaint.setAntiAlias(true);
         mPaint.setColor(Color.BLACK);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeWidth(1);
-
-        start = new PointF(0, 0);
-        end = new PointF(0, 0);
-        control1 = new PointF(0, 0);
-        control2 = new PointF(0, 0);
+        mPaint.setStyle(Paint.Style.FILL);
+        mPaint.setStrokeWidth(3);
     }
 
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        Log.i(TAG, "onMeasure: ");
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        Log.i(TAG, "onMeasure widthSize : " + widthSize);
+        Log.i(TAG, "onMeasure heightSize : " + heightSize);
 
         if (widthMode == MeasureSpec.EXACTLY) {
             mWidth = widthSize;
@@ -85,8 +81,7 @@ public class CustomView1 extends View {
 
         if (heightMode == MeasureSpec.EXACTLY) {
             mHeight = heightSize;
-        } else if (widthMeasureSpec == MeasureSpec.AT_MOST) {
-
+        } else if (heightMode == MeasureSpec.AT_MOST) {
             throw new IllegalArgumentException("height must be EXACTLY,you should set like android:height=\"200dp\"");
         }
 
@@ -96,24 +91,28 @@ public class CustomView1 extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        Log.i(TAG, "onSizeChanged: ");
         mWidth = w;
         mHeight = h;
-
     }
 
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.translate(mWidth / 2, mHeight / 2);  // 移动坐标系到屏幕中心
+        Log.i(TAG, "onDraw::getMeasuredWidth()=" + getMeasuredWidth()
+                + "; getMeasuredHeight()=" + getMeasuredHeight());
+        Log.i(TAG, "onDraw::getWidth()=" + getWidth() + "; getHeight()="
+                + getHeight());
+        mPaint.setColor(Color.YELLOW);
+        // 绘制背景（一个矩形框），长度为getMeasuredWidth()，高度为：getMeasuredHeight()
+        canvas.drawRect(0, 0, getMeasuredWidth(), getMeasuredHeight(), mPaint);
+        mPaint.setColor(Color.BLACK);
+        // 绘制文字
+        canvas.drawText("hello", getWidth() / 2,
+                getHeight() / 2, mPaint);
 
-        Path path = new Path();
 
-        path.addRect(-200,-200,200,200, Path.Direction.CCW);
-
-        path.setLastPoint(-300,300);                // <-- 重置最后一个点的位置
-
-        canvas.drawPath(path,mPaint);
     }
 
 
